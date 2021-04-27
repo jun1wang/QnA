@@ -3,6 +3,7 @@ import { QuestionList } from './QuestionList';
 import { getUnansweredQuestions, QuestionData } from './QuestionsData';
 import { Page } from './Page';
 import { PageTitle } from './PageTitle';
+import { Footer } from './Footer';
 
 export const HomePage = () => {
   const [questions, setQuestions] = React.useState<QuestionData[]>([]);
@@ -36,6 +37,7 @@ export const HomePage = () => {
           <QuestionList data={questions || []} />
         )}
       </div>
+      <Footer />
     </Page>
   );
 };

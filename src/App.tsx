@@ -1,13 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import styles from './App.module.css';
 import { createNoSubstitutionTemplateLiteral } from 'typescript';
 import { Header } from './Header';
 import { HomePage } from './HomePage';
 
 function App() {
   return (
-    <div className="App">
+    <div className={styles.container}>
       <Header />
       <HomePage />
     </div>
