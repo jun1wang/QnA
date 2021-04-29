@@ -35,7 +35,6 @@ export const HomePage = () => {
             justify-content: space-between;
             `}
         >
-        <div>
           <PageTitle>Unanswered Questions</PageTitle>
           <PrimaryButton onClick={handleAskQuestionClicked}>
             Ask a question
@@ -46,8 +45,9 @@ export const HomePage = () => {
         ) : (
           <QuestionList data={questions || []} />
         )}
+      <div>
+        <Footer />
       </div>
-      <Footer />
     </Page>
   );
 };
