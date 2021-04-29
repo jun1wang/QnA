@@ -1,13 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
-import styles from './App.module.css';
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+import { fontFamily, fontSize, gray2 } from './Styles';
 import { createNoSubstitutionTemplateLiteral } from 'typescript';
 import { Header } from './Header';
 import { HomePage } from './HomePage';
+import logo from './logo.svg';
 
 function App() {
   return (
-    <div className={styles.container}>
+    <div css={css`
+      font-family: ${fontFamily};  
+      font-size: ${fontSize};
+      color: ${gray2};
+    `}>
       <Header />
       <HomePage />
     </div>
