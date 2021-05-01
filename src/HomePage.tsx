@@ -7,6 +7,7 @@ import { Page } from './Page';
 import { PageTitle } from './PageTitle';
 import { Footer } from './Footer';
 import { PrimaryButton } from './Styles';
+import { useNavigate } from 'react-router-dom';
 
 export const HomePage = () => {
   const [questions, setQuestions] = React.useState<QuestionData[]>([]);
@@ -21,10 +22,13 @@ export const HomePage = () => {
     };
     doGetUnansweredQuestions();
   }, []);
+
   const [questionsLoading, setQuestionsLoading] = React.useState(true);
 
+  const navigate = useNavigate();
+
   const handleAskQuestionClicked = () => {
-    console.log('TODO');
+    navigate('ask');
   };
 
   return (

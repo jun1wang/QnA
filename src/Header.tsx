@@ -2,6 +2,7 @@
 import { css } from '@emotion/react';
 import { fontFamily, fontSize, gray1, gray2, gray5 } from './Styles';
 import { UserIcon } from './Icons';
+import { Link } from 'react-router-dom';
 
 export const Header = () => {
   const handleSearchInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,14 +22,15 @@ export const Header = () => {
       border-bottom: 1px solid ${gray5};
       box-shadow: 0 3px 7px 0 rgba(110, 112, 114, 0.21);
     `}>
-      <a href="./"
-        css={css`
-        font-size: 24px; 
-        font-weight: bold;
-        color: ${gray1};
-        text-decoration: none;
-      `}
-      > Q & A</a>
+      <Link to="/"
+          css={css`
+          font-size: 24px; 
+          font-weight: bold;
+          color: ${gray1};
+          text-decoration: none;
+        `}
+        > Q & A
+      </Link>
       <input
         type="text"
         placeholder="Search..."
@@ -49,7 +51,7 @@ export const Header = () => {
           }
         `}
       />
-      <a href="./signin" 
+      <Link to="signin" 
          css={css`
           font-family: ${fontFamily};
           font-size: ${fontSize};
@@ -67,7 +69,7 @@ export const Header = () => {
         `}>
         <UserIcon />
         <span>Sign In</span>
-      </a>
+      </Link>
     </div>
   );
 };
