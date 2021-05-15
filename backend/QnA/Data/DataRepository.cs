@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using QnA.Data.Models;
+using System.Reflection;
 
 namespace QnA.Data
 {
@@ -17,12 +18,43 @@ namespace QnA.Data
         {
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
+        public AnswerGetResponse GetAnswer(int answerId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                return connection.QueryFirstOrDefault<AnswerGetResponse>(@"EXEC dbo.Answer_Get_ByAnswerId 
+                    @AnswerId = @AnswerId",
+                    new { AnswerId = answerId });
+            }
+        }
+
+        public QuestionGetSingleResponse GetQuestion(int questionId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var question = connection.QueryFirstOrDefault<QuestionGetSingleResponse>(
+                    @"EXEC dbo.Question_GetSingle 
+                    @QuestionId = @QuestionId",
+                    new { QuestionId = questionId });
+                if (question != null)
+                {
+                    question.Answers = connection.Query<AnswerGetResponse>(
+                        @"EXEC dbo.Answer_Get_ByQuestionId 
+                        @QuestionId = @QuestionId",
+                        new { QuestionId = questionId });
+                }
+                return question;
+            }
+        }
+
         public IEnumerable<QuestionGetManyResponse> GetQuestions()
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                return connection.Query<QuestionGetManyResponse>(@"EXEC dbo.Question_GetMany");
+                return connection.Query<QuestionGetManyResponse>("EXEC dbo.Question_GetMany");
             }
         }
 
@@ -31,10 +63,9 @@ namespace QnA.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                return connection.Query<QuestionGetManyResponse>(
-                    @"EXEC dbo.Question_GetMany_BySearch @Search = @Search",
-                    new { Search = search }
-                );
+                return connection.Query<QuestionGetManyResponse>(@"EXEC dbo.Question_GetMany_BySearch 
+                    @Search = @Search",
+                    new { Search = search });
             }
         }
 
@@ -47,51 +78,18 @@ namespace QnA.Data
             }
         }
 
-        public QuestionGetSingleResponse GetQuestion(int questionId)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var question = connection.QueryFirstOrDefault<QuestionGetSingleResponse>(
-                    @"EXEC dbo.Question_GetSingle @QuestionId = @QuestionId",
-                    new { QuestionId = questionId }
-                );
-                if (question != null)
-                {
-                    question.Answers = connection.Query<AnswerGetResponse>(
-                        @"EXEC dbo.Answer_Get_ByQuestionId @QuestionId = @QuestionId",
-                        new { QuestionId = questionId }
-                    );
-                }
-                return question;
-            }
-        }
-
         public bool QuestionExists(int questionId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                return connection.QueryFirst<bool>(
-                  @"EXEC dbo.Question_Exists @QuestionId = @QuestionId",
-                  new { QuestionId = questionId }
-                );
+                return connection.QueryFirst<bool>(@"EXEC dbo.Question_Exists 
+                    @QuestionId = @QuestionId",
+                    new { QuestionId = questionId });
             }
         }
 
-        public AnswerGetResponse GetAnswer(int answerId)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                return connection.QueryFirstOrDefault<AnswerGetResponse>(
-                  @"EXEC dbo.Answer_Get_ByAnswerId @AnswerId = @AnswerId",
-                  new { AnswerId = answerId }
-                );
-            }
-        }
-
-        public QuestionGetSingleResponse PostQuestion(QuestionPostRequest question)
+        public QuestionGetSingleResponse PostQuestion(QuestionPostFullRequest question)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -101,9 +99,7 @@ namespace QnA.Data
                     @Title = @Title, @Content = @Content, 
                     @UserId = @UserId, @UserName = @UserName, 
                     @Created = @Created",
-                    question
-                );
-
+                    question);
                 return GetQuestion(questionId);
             }
         }
@@ -113,10 +109,9 @@ namespace QnA.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                connection.Execute(
-                  @"EXEC dbo.Question_Put @QuestionId = @QuestionId, @Title = @Title, @Content = @Content",
-                  new { QuestionId = questionId, question.Title, question.Content }
-                );
+                connection.Execute(@"EXEC dbo.Question_Put 
+                    @QuestionId = @QuestionId, @Title = @Title, @Content = @Content",
+                    new { QuestionId = questionId, question.Title, question.Content });
                 return GetQuestion(questionId);
             }
         }
@@ -126,26 +121,43 @@ namespace QnA.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                connection.Execute(@"EXEC dbo.Question_Delete @QuestionId = @QuestionId",
-                  new { QuestionId = questionId }
-                );
+                connection.Execute(@"EXEC dbo.Question_Delete 
+                    @QuestionId = @QuestionId",
+                    new { QuestionId = questionId });
             }
         }
 
-        public AnswerGetResponse PostAnswer(AnswerPostRequest answer)
+        public AnswerGetResponse PostAnswer(AnswerPostFullRequest answer)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                return connection.QueryFirst<AnswerGetResponse>(
-                  @"EXEC dbo.Answer_Post 
-                        @QuestionId = @QuestionId, @Content = @Content, 
-                        @UserId = @UserId, @UserName = @UserName,
-                        @Created = @Created",
-                  answer
-                );
+                return connection.QueryFirst<AnswerGetResponse>(@"EXEC dbo.Answer_Post 
+                    @QuestionId = @QuestionId, @Content = @Content, 
+                    @UserId = @UserId, @UserName = @UserName,
+                    @Created = @Created",
+                    answer);
             }
         }
 
+        IEnumerable<QuestionGetManyResponse> IDataRepository.GetQuestionWithAnswers()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                var questions = connection.Query<QuestionGetManyResponse>("EXEC dbo.Question_GetMany");
+
+                foreach (var question in questions)
+                {
+                    question.Answers = connection.Query<AnswerGetResponse>(
+                        @"EXEC dbo.Answer_Get_ByQuestionId @QuestionId = @QuestionId",
+                        new { QuestionId = question.QuestionId })
+                       .ToList();
+                }
+
+                return questions;
+            }
+        }
     }
 }
