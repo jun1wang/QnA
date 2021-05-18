@@ -31,7 +31,7 @@ namespace QnA.Data
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(1)
-                .SetSlidingExpiration(TimeSpan.FromMinutes(30);
+                .SetSlidingExpiration(TimeSpan.FromMinutes(30));
 
             _cache.Set(GetCacheKey(question.QuestionId), question, cacheEntryOptions);
         }
