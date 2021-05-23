@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Text.Json; 
 
-namespace QandA.Controllers
+namespace QnA.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
