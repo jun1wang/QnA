@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace QnA.Data.Models
+namespace QandA.Data.Models
 {
     public class QuestionPostRequest
     {

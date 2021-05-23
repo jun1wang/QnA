@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QnA.Data.Models
+namespace QandA.Data.Models
 {
     public class AnswerPostFullRequest
     {

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using QnA.Data;
-using QnA.Data.Models;
+using QandA.Data;
+using QandA.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
-using System.Text.Json; 
+using System.Text.Json;
 
-namespace QnA.Controllers
+namespace QandA.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -156,7 +156,7 @@ namespace QnA.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var jsonContent = await response.Content.ReadAsStringAsync();
-                var user = JsonSerializer.Deserialize<User>(jsonContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var user = JsonSerializer.Deserialize<User>(jsonContent, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
                 return user.Name;
             }
             else

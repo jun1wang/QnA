@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using QnA.Data.Models;
+using QandA.Data.Models;
 
-namespace QnA.Data
-{ 
+namespace QandA.Data
+{
     public class QuestionCache : IQuestionCache
     {
         private MemoryCache _cache { get; set; }
@@ -29,10 +29,7 @@ namespace QnA.Data
 
         public void Set(QuestionGetSingleResponse question)
         {
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSize(1)
-                .SetSlidingExpiration(TimeSpan.FromMinutes(30));
-
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetSize(1);
             _cache.Set(GetCacheKey(question.QuestionId), question, cacheEntryOptions);
         }
 

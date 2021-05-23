@@ -1,16 +1,16 @@
 ﻿using System;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using QnA.Data;
+using QandA.Data;
 
-namespace QnA.Authorization
+
+namespace QandA.Authorization
 {
-    public class MustBeQuestionAuthorHandler: AuthorizationHandler<MustBeQuestionAuthorRequirement>
+    public class MustBeQuestionAuthorHandler:AuthorizationHandler<MustBeQuestionAuthorRequirement>
     {
         private readonly IDataRepository _dataRepository;
-
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public MustBeQuestionAuthorHandler(IDataRepository dataRepository, IHttpContextAccessor httpContextAccessor)
@@ -19,9 +19,7 @@ namespace QnA.Authorization
             _httpContextAccessor = httpContextAccessor;
         }
 
-        protected async override Task HandleRequirementAsync (
-            AuthorizationHandlerContext context,
-            MustBeQuestionAuthorRequirement requirement)
+        protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context, MustBeQuestionAuthorRequirement requirement)
         {
             if (!context.User.Identity.IsAuthenticated)
             {
@@ -29,28 +27,22 @@ namespace QnA.Authorization
                 return;
             }
 
-            int questionId = Convert.ToInt32(_httpContextAccessor.HttpContext.Request.RouteValues["questionId"]);
-
+            var questionId = _httpContextAccessor.HttpContext.Request.RouteValues["questionId"];
+            int questionIdAsInt = Convert.ToInt32(questionId);
             var userId = context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            var question = await _dataRepository.GetQuestion(questionId);
-
+            var question = await _dataRepository.GetQuestion(questionIdAsInt);
             if (question == null)
             {
+                // let it through so the controller can return a 404
                 context.Succeed(requirement);
-
                 return;
             }
-
             if (question.UserId != userId)
             {
                 context.Fail();
-
                 return;
             }
-
             context.Succeed(requirement);
-
         }
     }
 }

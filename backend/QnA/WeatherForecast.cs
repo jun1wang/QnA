@@ -1,6 +1,6 @@
 using System;
 
-namespace QnA
+namespace QandA
 {
     public class WeatherForecast
     {

@@ -12,13 +12,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using DbUp;
-using QnA.Data;
+using QandA.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using QnA.Authorization;
+using QandA.Authorization;
 
-namespace QnA
+namespace QandA
 {
     public class Startup
     {
@@ -50,7 +50,7 @@ namespace QnA
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "QnA", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "QandA", Version = "v1" });
             });
 
             services.AddScoped<IDataRepository, DataRepository>();
@@ -72,7 +72,7 @@ namespace QnA
             services.AddAuthorization(options =>
                   options.AddPolicy("MustBeQuestionAuthor", policy =>
                     policy.Requirements.Add(new MustBeQuestionAuthorRequirement())));
-            services.AddScoped<IAuthorizationHandler, MustBeQuestionAuthorHandler>();
+            services.AddScoped<IAuthorizationHandler,MustBeQuestionAuthorHandler>();
             services.AddHttpContextAccessor();
 
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
@@ -89,13 +89,13 @@ namespace QnA
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "QnA v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "QandA v1"));
             }
             else
             {
                 app.UseHttpsRedirection();
             }
-
+            
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();

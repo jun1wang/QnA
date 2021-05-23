@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using QnA.Data.Models;
+using QandA.Data.Models;
 
-namespace QnA.Data
+namespace QandA.Data
 {
     public interface IQuestionCache
     {

@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using QnA.Data.Models;
+using QandA.Data.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using static Dapper.SqlMapper;
 using System.Threading.Tasks;
 
-namespace QnA.Data
+namespace QandA.Data
 {
     public class DataRepository : IDataRepository
     {
